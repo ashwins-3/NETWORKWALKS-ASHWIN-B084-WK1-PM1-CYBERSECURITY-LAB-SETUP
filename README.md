@@ -1,132 +1,234 @@
-# Cybersecurity Lab Environment Setup | NetworkWalks — Week 1 (PM1)
+
+# Cybersecurity Lab Environment Setup | NetworkWalks - Week 1 (PM1)
 
 ## Project Overview
 
-This project documents the setup of an isolated cybersecurity practice lab using **Oracle VirtualBox** and **Kali Linux** as part of the NetworkWalks Cybersecurity Internship, Week 1 — Project Module 1 (WK1-PM1).
+This project focuses on setting up a virtual cybersecurity testing lab using **Oracle VirtualBox** and **Kali Linux** as part of the **NetworkWalks Cybersecurity Internship - Week 1, Project Module 1 (WK1-PM1)**.
 
-The goal is to establish a virtual lab with a custom NAT Network, a manually configured Kali Linux IPv4 address, guest integration settings, and Internet connectivity suitable for authorized cybersecurity training.
+The objective is to build a functional cybersecurity practice environment by configuring virtual networking, static IP addressing, host-guest integration, shared folders, and Internet connectivity.
 
-> **Scope:** This lab is for learning and testing only on systems I own or have permission to use.
+The lab provides a foundation for future cybersecurity exercises, network analysis, and authorized security testing.
 
-## Lab Environment
+> **Scope:** This environment is intended for educational purposes and security testing on systems I own or have explicit permission to use.
+
+---
+
+## 1. Lab Environment
 
 | Component | Configuration |
 |---|---|
-| Host operating system | Windows 11 |
-| Hypervisor | Oracle VirtualBox |
-| Guest operating system | Kali Linux 2026.3 (VirtualBox AMD64 image) |
-| Guest RAM | 4096 MB (after performance troubleshooting) |
+| Host Operating System | Windows 11 |
+| Virtualization Platform | Oracle VirtualBox |
+| Guest Operating System | Kali Linux 2026.3 |
+| Guest RAM | 4096 MB |
 | Virtual CPUs | 2 |
-| Network attachment | NAT Network (`NatNetwork`) |
-| NAT Network prefix | `10.0.0.0/24` |
-| Guest IPv4 configuration | Manual: `10.0.0.2/24` |
-| Gateway | `10.0.0.1` |
-| DNS server | `10.0.0.1` |
+| Graphics Controller | VMSVGA |
+| Video Memory | 128 MB |
+| Network Type | NAT Network |
+| NAT Network Name | `NatNetwork` |
+| Network Subnet | `10.0.0.0/24` |
+| Kali Linux IP Address | `10.0.0.2/24` |
+| Default Gateway | `10.0.0.1` |
+| DNS Server | `10.0.0.1` |
 | Shared Clipboard | Bidirectional |
 | Drag and Drop | Bidirectional |
+| Shared Folder | Windows Downloads |
+| Shared Folder Mount Point | `/media/sf_Downloads` |
 
-## Network Architecture
+---
+
+## 2. Network Architecture
+
+The lab uses a custom NAT Network to provide a private virtual network with outbound Internet connectivity.
 
 ```text
-Windows 11 host
-    |
+Windows 11 Host
+       |
 Oracle VirtualBox
-    |
-NAT Network: 10.0.0.0/24
-    |-- VirtualBox gateway: 10.0.0.1
-    `-- Kali Linux VM: 10.0.0.2/24
+       |
+NAT Network (10.0.0.0/24)
+       |
+       |-- Gateway: 10.0.0.1
+       |
+       |-- Kali Linux VM: 10.0.0.2/24
 ```
 
-The NAT Network gives the guest a private lab subnet while allowing outbound Internet access through the host's connection. Additional deliberately vulnerable or test VMs can be attached to this network for future authorized lab exercises.
+The NAT Network allows Kali Linux to communicate within the virtual lab while accessing the Internet through the host system.
 
-## Implementation Steps
+Additional virtual machines can be added to this network for future authorized cybersecurity exercises.
 
-### 1. Set up VirtualBox and Kali Linux
+---
 
-Installed Oracle VirtualBox, imported the Kali Linux VirtualBox image, and booted the VM. The running Kali desktop is shown below.
+## 3. Implementation Steps
 
-![Kali Linux running](screenshots/07-kali-desktop.png)
+### Step 1 - Install VirtualBox and Kali Linux
 
-### 2. Configure the NAT Network
+Installed Oracle VirtualBox and imported the Kali Linux VirtualBox AMD64 image.
 
-Created a NAT Network named `NatNetwork` using the IPv4 prefix `10.0.0.0/24`. In the VM's Network settings, enabled Adapter 1, selected **NAT Network**, chose `NatNetwork`, and ensured that the virtual cable was connected.
+Configured the virtual machine with the following resources:
 
-![NAT Network subnet](screenshots/02-nat-network-subnet.png)
+- Base Memory: 4096 MB
+- Processors: 2 CPUs
+- Graphics Controller: VMSVGA
+- Video Memory: 128 MB
+- 3D Acceleration: Disabled
 
-![VM Network Adapter](screenshots/01-virtualbox-nat-network-adapter.png)
+Successfully launched Kali Linux and accessed the desktop environment.
 
-### 3. Configure Kali's static IPv4 address
+**Screenshot:**
 
-In Kali's NetworkManager graphical settings, selected the wired connection and configured:
+![Kali Linux Desktop](screenshots/07-kali-desktop.png)
 
-- **Method:** Manual
-- **IPv4 address:** `10.0.0.2`
-- **Prefix length:** `24`
-- **Gateway:** `10.0.0.1`
-- **DNS:** `10.0.0.1`
+### Step 2 - Configure NAT Network
 
-![Kali manual IPv4 configuration](screenshots/03-kali-static-ip.png)
+Created a custom NAT Network in VirtualBox.
 
-### 4. Enable guest integration features
+**Network Configuration:**
 
-Enabled bidirectional shared clipboard and drag-and-drop from VirtualBox's **Devices** menu.
+- Network Name: `NatNetwork`
+- IPv4 Prefix: `10.0.0.0/24`
+- Network Adapter: Adapter 1
+- Attached To: NAT Network
+- Cable Connected: Enabled
 
-![Bidirectional clipboard](screenshots/04-bidirectional-clipboard.png)
+Assigned the created NAT Network to the Kali Linux virtual machine.
 
-![Bidirectional drag and drop](screenshots/05-bidirectional-drag-drop.png)
+**Screenshots:**
 
-### 5. Create a VM snapshot
+![NAT Network Subnet](screenshots/02-nat-network-subnet.png)
 
-Created a VirtualBox snapshot named `KaliNew` as a recovery point for the virtual lab.
+![VirtualBox Network Adapter](screenshots/01-virtualbox-nat-network-adapter.png)
 
-![VirtualBox snapshot](screenshots/06-virtualbox-snapshot.png)
+### Step 3 - Configure Static IPv4 Address
 
-### 6. Verify network connectivity
+Configured Kali Linux with a manual IPv4 address through NetworkManager.
 
-Used the following commands inside Kali Linux:
+**IP Configuration:**
+
+- IPv4 Method: Manual
+- IP Address: `10.0.0.2`
+- Prefix Length: `24`
+- Default Gateway: `10.0.0.1`
+- DNS Server: `10.0.0.1`
+
+This configuration assigns Kali Linux a specific address within the virtual lab network.
+
+**Screenshot:**
+
+![Static IP Configuration](screenshots/03-kali-static-ip.png)
+
+### Step 4 - Enable Shared Clipboard and Drag-and-Drop
+
+Enabled the VirtualBox guest integration features to improve interaction between Windows and Kali Linux.
+
+**Settings:**
+
+- Shared Clipboard: Bidirectional
+- Drag and Drop: Bidirectional
+
+These settings support copying text and transferring supported content between the host and guest operating systems.
+
+**Screenshots:**
+
+![Bidirectional Clipboard](screenshots/04-bidirectional-clipboard.png)
+
+![Bidirectional Drag and Drop](screenshots/05-bidirectional-drag-drop.png)
+
+### Step 5 - Create Virtual Machine Snapshot
+
+Created a VirtualBox snapshot named `KaliNew`.
+
+A snapshot provides a recovery point that can be used to restore the virtual machine to an earlier state if configuration changes or future experiments cause issues.
+
+**Screenshot:**
+
+![VirtualBox Snapshot](screenshots/06-virtualbox-snapshot.png)
+
+### Step 6 - Verify Network Connectivity
+
+Verified the IP configuration, default gateway, Internet connectivity, and DNS resolution using Linux networking commands.
+
+**Commands Used:**
 
 ```bash
-ip -4 addr
+ip -4 addr show eth0
 ip route
 ping -c 4 10.0.0.1
 ping -c 4 8.8.8.8
 ping -c 4 google.com
 ```
 
-After troubleshooting, the gateway, external IP, and domain-name ping tests each returned **4/4 replies (0% packet loss)**, confirming gateway reachability, outbound connectivity, and working DNS resolution at that time.
+**Verification Results:**
 
-**Evidence to add before submission:** a fresh terminal screenshot showing `ip -4 addr`, route information, and the successful pings, ideally after a VM restart.
+| Test | Result |
+|---|---|
+| Static IPv4 Configuration | `10.0.0.2/24` configured |
+| Default Gateway | `10.0.0.1` |
+| Gateway Connectivity | Successful |
+| Internet Connectivity | Successful |
+| DNS Resolution | Successful |
+| Recorded Ping Tests | 0% packet loss |
 
+The successful ping tests confirmed connectivity to the VirtualBox NAT gateway, an external Internet address, and a domain name.
 
-### 7. Shared Folder Configuration — Completed
+**Screenshot:**
 
-Configured the Windows Downloads folder as a permanent VirtualBox shared folder with auto-mount enabled, allowing Kali Linux to access files from the Windows host.
+![Network Connectivity Verification](screenshots/09-network-verification.png)
 
-**Configuration:**
-- Host folder: Windows Downloads
+### Step 7 - Configure Shared Folder
+
+Configured the Windows Downloads folder as a permanent shared folder in VirtualBox.
+
+This allows files from the Windows host to be accessed within Kali Linux.
+
+**Shared Folder Settings:**
+
+- Host Folder: Windows Downloads
 - Auto-mount: Enabled
 - Make Permanent: Enabled
-- Guest mount point: `/media/sf_Downloads`
+- Read-only: Disabled
+- Guest Mount Point: `/media/sf_Downloads`
 
-**Verification:**
+**Verification Commands:**
 
 ```bash
 ls /media/
 ls /media/sf_Downloads
 ```
 
-Successfully verified that the Windows Downloads files were accessible from Kali Linux.
+**Result:**
+
+The shared folder was successfully mounted inside Kali Linux.
+
+The verification commands displayed the shared folder and listed the files stored in the Windows Downloads directory, confirming successful access between the host and guest operating systems.
 
 **Screenshot:**
 
 ![Shared Folder Verification](screenshots/08-shared-folder.png)
-  
 
-## Troubleshooting: Network stuck during startup
+---
 
-**Problem:** After a VM restart, the wired connection showed `connecting (getting IP configuration)` and the `eth0` interface initially had no IPv4 address.
+## 4. Troubleshooting Experience
 
-**Diagnosis:** Checked the network interface and connection profile using:
+During the lab setup, I encountered several issues and resolved them through configuration checks and troubleshooting.
+
+### Issue 1 - Network Disconnection After Restart
+
+**Problem:**
+
+After shutting down and restarting Kali Linux, the Ethernet connection failed to establish properly.
+
+NetworkManager displayed:
+
+```text
+eth0 ethernet connecting (getting IP configuration)
+```
+
+The `eth0` interface initially did not have an IPv4 address, preventing Internet access.
+
+**Troubleshooting:**
+
+Checked the Ethernet interface, IP configuration, and NetworkManager connection profile using:
 
 ```bash
 nmcli device status
@@ -134,48 +236,111 @@ ip -4 addr
 nmcli connection show
 ```
 
-**Change applied:** Followed the NetworkWalks Week 1 troubleshooting guidance to disable IPv4 duplicate-address-detection waiting in the existing NetworkManager connection profile:
+Following the NetworkWalks Week 1 troubleshooting guidance, modified the existing NetworkManager connection:
 
 ```bash
 sudo nmcli connection modify "Wired connection 1" ipv4.dad-timeout 0
 ```
 
-**Outcome:** Following this configuration change, tests of `10.0.0.1`, `8.8.8.8`, and `google.com` all succeeded (four replies each, no packet loss). This is an observed recovery; the exact root cause was not conclusively established. The saved configuration can be checked using:
+This command disables IPv4 Duplicate Address Detection for the specified connection profile.
+
+**Result:**
+
+Following the configuration change, network connectivity was restored.
+
+Verified connectivity using:
 
 ```bash
-nmcli -g ipv4.dad-timeout connection show "Wired connection 1"
+ping -c 4 10.0.0.1
+ping -c 4 8.8.8.8
+ping -c 4 google.com
 ```
 
-**Additional display observation:** A white desktop after login was resolved by restoring the desired wallpaper; it was not a Linux boot failure.
+All three ping tests succeeded with 0% packet loss.
 
-## Key Learnings
+Although the connection recovered after the modification, the exact root cause was not conclusively established.
 
-- Using VirtualBox NAT Networks for a private virtual lab.
-- Assigning a manual IPv4 address and default gateway in Kali Linux.
-- Testing gateway connectivity, Internet access, and DNS separately.
-- Investigating Linux networking with `nmcli` and `ip`.
-- Creating VM snapshots and configuring host–guest integration.
-- Recording both successful setup steps and troubleshooting evidence.
+**Learning:**
 
-## Submission Checklist
+Gained experience diagnosing network connectivity problems using Linux terminal commands and modifying NetworkManager connection settings.
 
-- [x] VirtualBox and Kali Linux set up
-- [x] NAT Network configured
-- [x] Manual IP settings documented
-- [x] Clipboard and drag-and-drop options enabled
-- [x] VM snapshot created
-- [x] Successful Internet ping tests recorded in terminal output
-- [ ] Add terminal verification screenshot and confirm static IP after restart
-- [ ] Configure and document shared host Downloads folder
-- [ ] Publish GitHub repository and LinkedIn post
-- [ ] Submit both links through the NetworkWalks submission form
+### Issue 2 - White Desktop Background After Restart
 
-## References
+**Problem:**
 
-- NetworkWalks Cybersecurity Internship — Week 1, Project Module 1 task instructions (provided to interns)
-- [VirtualBox Downloads](https://www.virtualbox.org/wiki/Downloads)
+After restarting Kali Linux, the desktop appeared with a white background.
+
+**Solution:**
+
+Verified that the operating system had booted correctly and that the desktop interface was accessible.
+
+Restored the preferred desktop wallpaper.
+
+**Result:**
+
+The desktop appearance returned to normal.
+
+### Issue 3 - Unable to Save Shared Folder Settings
+
+**Problem:**
+
+VirtualBox displayed an error while saving the shared folder configuration when Kali Linux was running.
+
+**Solution:**
+
+1. Shut down the Kali Linux virtual machine.
+2. Opened VirtualBox Manager.
+3. Navigated to Settings - Shared Folders.
+4. Added the Windows Downloads folder.
+5. Enabled Auto-mount and Make Permanent.
+6. Saved the configuration successfully.
+
+**Result:**
+
+The shared folder was configured successfully.
+
+Verified its accessibility inside Kali Linux using:
+
+```bash
+ls /media/sf_Downloads
+```
+
+The command successfully listed the files from the Windows Downloads folder.
+
+---
+
+## 5. Key Learnings
+
+Through this project, I gained practical experience in:
+
+- Installing and configuring Kali Linux in Oracle VirtualBox.
+- Creating and managing NAT Networks for virtual lab environments.
+- Configuring static IPv4 addresses, gateways, and DNS servers.
+- Testing network connectivity using Linux commands.
+- Troubleshooting NetworkManager configuration issues.
+- Understanding IPv4 Duplicate Address Detection.
+- Configuring bidirectional shared clipboard and drag-and-drop.
+- Creating virtual machine snapshots for recovery.
+- Establishing shared folders between Windows and Kali Linux.
+- Documenting lab configurations, troubleshooting procedures, and verification results.
+
+This project helped strengthen my understanding of virtualization, Linux networking, and practical cybersecurity lab management.
+
+---
+
+## 6. References
+
+- NetworkWalks Cybersecurity Internship - Week 1, Project Module 1 (WK1-PM1)
+- [Oracle VirtualBox Official Website](https://www.virtualbox.org/)
+- [Kali Linux Official Website](https://www.kali.org/)
 - [Kali Linux Downloads](https://www.kali.org/get-kali/)
 
 ---
 
-*Documented from my own lab setup and troubleshooting as part of the NetworkWalks Cybersecurity Internship.*
+**Internship:** NetworkWalks Cybersecurity Internship
+
+**Batch:** B084
+
+**Project:** Week 1 - Cybersecurity Lab Environment Setup (WK1-PM1)
+
+*This project was completed and documented as part of my practical learning experience during the NetworkWalks Cybersecurity Internship.*
