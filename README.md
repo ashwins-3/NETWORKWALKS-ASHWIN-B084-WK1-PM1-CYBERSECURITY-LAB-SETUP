@@ -97,9 +97,30 @@ After troubleshooting, the gateway, external IP, and domain-name ping tests each
 
 **Evidence to add before submission:** a fresh terminal screenshot showing `ip -4 addr`, route information, and the successful pings, ideally after a VM restart.
 
-### 7. Shared folder — verification pending
 
-**To complete before submitting:** Configure the Windows Downloads folder as a VirtualBox shared folder, confirm it is accessible in Kali, and add a screenshot to `screenshots/`. The internship's Week 1 project requires host Downloads sharing; it is not shown in the current screenshots.
+### 7. Shared Folder Configuration — Completed
+
+Configured the Windows Downloads folder as a permanent VirtualBox shared folder with auto-mount enabled, allowing Kali Linux to access files from the Windows host.
+
+**Configuration:**
+- Host folder: Windows Downloads
+- Auto-mount: Enabled
+- Make Permanent: Enabled
+- Guest mount point: `/media/sf_Downloads`
+
+**Verification:**
+
+```bash
+ls /media/
+ls /media/sf_Downloads
+```
+
+Successfully verified that the Windows Downloads files were accessible from Kali Linux.
+
+**Screenshot:**
+
+![Shared Folder Verification](screenshots/08-shared-folder.png)
+  
 
 ## Troubleshooting: Network stuck during startup
 
